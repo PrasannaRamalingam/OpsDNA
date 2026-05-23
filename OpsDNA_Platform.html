@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>OpsDNA · AMS Knowledge Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Outfit:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════
+   DESIGN SYSTEM — Industrial Glassmorphism
+   Deep slate + electric cyan + warm gold
+═══════════════════════════════════════ */
+:root{
+  --bg0:#080c14;
+  --bg1:#0d1220;
+  --bg2:#111827;
+  --bg3:#1a2235;
+  --bg4:#222e45;
+  --glass:rgba(255,255,255,0.04);
+  --glass2:rgba(255,255,255,0.07);
+  --glass3:rgba(255,255,255,0.11);
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.14);
+  --border3:rgba(255,255,255,0.22);
+  --cyan:#00d4e8;
+  --cyan2:#00f0ff;
+  --cyan-dim:rgba(0,212,232,0.12);
+  --cyan-dim2:rgba(0,212,232,0.06);
+  --gold:#f0a500;
+  --gold2:#ffbe2e;
+  --gold-dim:rgba(240,165,0,0.12);
+  --emerald:#00c875;
+  --emerald-dim:rgba(0,200,117,0.1);
+  --rose:#ff4d6a;
+  --rose-dim:rgba(255,77,106,0.1);
+  --violet:#8b5cf6;
+  --violet-dim:rgba(139,92,246,0.1);
+  --text:#e8eef8;
+  --text2:#8896b0;
+  --text3:#4a5a78;
+  --font-display:'Unbounded',sans-serif;
+  --font-body:'Outfit',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg0);
+  color:var(--text);
+  font-family:var(--font-body);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* Global grid background */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,232,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,232,0.03) 1px, transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;z-index:0;
+}
+
+/* Ambient glow orbs */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 50% 35% at 15% 20%, rgba(0,212,232,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 75%, rgba(240,165,0,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 25% at 70% 15%, rgba(139,92,246,0.05) 0%, transparent 55%);
+  pointer-events:none;z-index:0;
+}
+
+/* ═══════ SCROLLBAR ═══════ */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
+
+/* ═══════ LAYOUT ═══════ */
+.shell{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ═══════ SIDEBAR ═══════ */
+.sidebar{
+  width:260px;
+  flex-shrink:0;
+  background:rgba(13,18,32,0.95);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:300;
+  backdrop-filter:blur(20px);
+}
+
+/* logo area */
+.logo-area{
+  padding:24px 20px 20px;
+  border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.logo-area::before{
+  content:'';position:absolute;top:-20px;right:-20px;
+  width:80px;height:80px;
+  background:radial-gradient(circle, rgba(0,212,232,0.15), transparent 70%);
+}
+.logo-name{
+  font-family:var(--font-display);
+  font-size:20px;font-weight:900;
+  letter-spacing:-0.5px;
+  background:linear-gradient(135deg, var(--cyan2), var(--cyan), #7dd3fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;
+}
+.logo-dna{color:var(--gold);-webkit-text-fill-color:var(--gold);}
+.logo-sub{
+  font-family:var(--font-mono);
+  font-size:8.5px;color:var(--text3);
+  letter-spacing:2.5px;text-transform:uppercase;
+  margin-top:5px;
+}
+.version-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--cyan-dim);border:1px solid rgba(0,212,232,0.2);
+  border-radius:4px;padding:2px 7px;
+  font-family:var(--font-mono);font-size:9px;color:var(--cyan);
+  margin-top:8px;
+}
+.v-dot{width:5px;height:5px;border-radius:50%;background:var(--emerald);animation:pulse 2s infinite;}
+
+/* nav */
+.nav-scroll{flex:1;overflow-y:auto;padding:14px 10px;}
+.nav-sect{
+  font-family:var(--font-mono);
+  font-size:8px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--text3);padding:14px 10px 5px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;
+  cursor:pointer;font-size:13px;font-weight:500;
+  color:var(--text2);transition:all .18s;
+  margin-bottom:2px;position:relative;
+  border:1px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:var(--glass2);}
+.nav-item.active{
+  background:var(--cyan-dim);
+  color:var(--cyan);
+  border-color:rgba(0,212,232,0.2);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:20%;bottom:20%;
+  width:2px;background:var(--cyan);border-radius:2px;
+}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+.nav-badge{
+  margin-left:auto;font-family:var(--font-mono);
+  font-size:9px;padding:2px 6px;border-radius:4px;
+  font-weight:500;
+}
+.nb-rose{background:var(--rose-dim);color:var(--rose);}
+.nb-gold{background:var(--gold-dim);color:var(--gold);}
+.nb-emerald{background:var(--emerald-dim);color:var(--emerald);}
+.nb-cyan{background:var(--cyan-dim);color:var(--cyan);}
+
+/* agent status footer */
+.agent-footer{
+  padding:14px;border-top:1px solid var(--border);
+}
+.agent-status-bar{
+  background:var(--glass2);border:1px solid var(--border2);
+  border-radius:10px;padding:11px 13px;
+  display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:all .18s;
+}
+.agent-status-bar:hover{background:var(--glass3);}
+.agent-avatar{
+  width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.agent-text{flex:1;}
+.agent-name{font-size:12px;font-weight:600;color:var(--text);}
+.agent-state{font-size:10px;color:var(--emerald);font-family:var(--font-mono);}
+.pulse-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--emerald);flex-shrink:0;
+  box-shadow:0 0 6px var(--emerald);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ═══════ TOPBAR ═══════ */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(8,12,20,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  height:56px;
+  display:flex;align-items:center;
+  padding:0 24px;gap:12px;
+}
+.page-title{
+  font-family:var(--font-display);
+  font-weight:600;font-size:14px;
+  color:var(--text);flex:1;letter-spacing:-0.3px;
+}
+.page-title span{
+  color:var(--text3);
+  font-family:var(--font-body);
+  font-weight:400;font-size:12px;
+  margin-left:8px;letter-spacing:0;
+}
+.itsm-live{
+  display:flex;align-items:center;gap:6px;
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:6px;padding:5px 10px;
+  font-family:var(--font-mono);font-size:10px;color:var(--text2);
+}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--emerald);box-shadow:0 0 5px var(--emerald);}
+
+/* ═══════ MAIN CONTENT ═══════ */
+.main-wrap{margin-left:260px;min-height:100vh;}
+.page-content{padding:24px;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.hidden{display:none!important;}
+
+/* ═══════ BUTTONS ═══════ */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 16px;border-radius:7px;border:none;
+  cursor:pointer;font-family:var(--font-body);
+  font-size:13px;font-weight:600;transition:all .18s;
+  white-space:nowrap;
+}
+.btn-cyan{
+  background:linear-gradient(135deg,var(--cyan),#00aec0);
+  color:var(--bg0);
+  box-shadow:0 0 20px rgba(0,212,232,0.25);
+}
+.btn-cyan:hover{box-shadow:0 0 30px rgba(0,212,232,0.4);transform:translateY(-1px);}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--bg0);
+  box-shadow:0 0 18px rgba(240,165,0,0.25);
+}
+.btn-gold:hover{box-shadow:0 0 28px rgba(240,165,0,0.4);transform:translateY(-1px);}
+.btn-ghost{
+  background:var(--glass);color:var(--text2);
+  border:1px solid var(--border2);
+}
+.btn-ghost:hover{background:var(--glass2);color:var(--text);border-color:var(--border3);}
+.btn-rose{background:var(--rose);color:#fff;}
+.btn-rose:hover{opacity:.9;}
+.btn-emerald{background:var(--emerald);color:var(--bg0);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-xs{padding:4px 9px;font-size:11px;}
+
+/* ═══════ CARDS ═══════ */
+.card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:12px;padding:20px;
+  backdrop-filter:blur(10px);
+  transition:border-color .2s;
+}
+.card:hover{border-color:var(--border2);}
+.card-glow-cyan{box-shadow:0 0 0 1px rgba(0,212,232,0.1),0 4px 24px rgba(0,212,232,0.05);}
+.card-glow-gold{box-shadow:0 0 0 1px rgba(240,165,0,0.1),0 4px 24px rgba(240,165,0,0.05);}
+.card-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:10px;}
+.card-title{
+  font-family:var(--font-display);
+  font-size:13px;font-weight:600;color:var(--text);
+  letter-spacing:-0.2px;
+}
+.card-sub{font-size:11px;color:var(--text3);margin-top:3px;font-family:var(--font-mono);}
+
+/* accent top borders */
+.accent-cyan{border-top:2px solid var(--cyan);}
+.accent-gold{border-top:2px solid var(--gold);}
+.accent-rose{border-top:2px solid var(--rose);}
+.accent-emerald{border-top:2px solid var(--emerald);}
+.accent-violet{border-top:2px solid var(--violet);}
+
+/* ═══════ STAT CARDS ═══════ */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:12px;padding:18px;
+  position:relative;overflow:hidden;
+  transition:all .2s;
+}
+.stat-card:hover{transform:translateY(-2px);border-color:var(--border2);}
+.stat-card::after{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:80px;height:80px;border-radius:50%;
+}
+.sc-cyan::after{background:radial-gradient(circle,rgba(0,212,232,0.12),transparent 70%);}
+.sc-gold::after{background:radial-gradient(circle,rgba(240,165,0,0.12),transparent 70%);}
+.sc-rose::after{background:radial-gradient(circle,rgba(255,77,106,0.12),transparent 70%);}
+.sc-em::after{background:radial-gradient(circle,rgba(0,200,117,0.12),transparent 70%);}
+.stat-num{
+  font-family:var(--font-display);
+  font-size:34px;font-weight:900;line-height:1;
+}
+.sn-cyan{color:var(--cyan);}
+.sn-gold{color:var(--gold);}
+.sn-rose{color:var(--rose);}
+.sn-em{color:var(--emerald);}
+.stat-lbl{
+  font-size:10px;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.5px;
+  margin-top:5px;font-family:var(--font-mono);
+}
+.stat-delta{font-size:11px;margin-top:6px;font-weight:500;}
+.d-up{color:var(--emerald);}
+.d-dn{color:var(--rose);}
+
+/* ═══════ FORMS ═══════ */
+.fg{margin-bottom:13px;}
+.fl{
+  display:block;font-size:10.5px;font-weight:600;
+  color:var(--text3);margin-bottom:5px;
+  text-transform:uppercase;letter-spacing:.8px;
+  font-family:var(--font-mono);
+}
+.fi,.fsel,.fta{
+  width:100%;background:var(--bg2);
+  border:1px solid var(--border2);border-radius:7px;
+  color:var(--text);
+  font-family:var(--font-body);font-size:13px;
+  padding:9px 13px;outline:none;transition:all .18s;
+}
+.fi:focus,.fsel:focus,.fta:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px var(--cyan-dim2);
+}
+.fsel option{background:var(--bg2);}
+.fta{resize:vertical;min-height:88px;line-height:1.6;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;}
+
+/* ═══════ TABS ═══════ */
+.tabbar{
+  display:flex;gap:3px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:9px;padding:4px;margin-bottom:20px;
+}
+.tabbtn{
+  flex:1;padding:8px 10px;border-radius:6px;
+  cursor:pointer;font-size:12px;font-weight:500;
+  text-align:center;color:var(--text3);
+  transition:all .18s;display:flex;
+  align-items:center;justify-content:center;gap:5px;
+}
+.tabbtn:hover{color:var(--text2);}
+.tabbtn.on{
+  background:var(--bg3);color:var(--text);
+  border:1px solid var(--border2);font-weight:600;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+
+/* ═══════ TABLES ═══════ */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th{
+  text-align:left;padding:9px 14px;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border2);
+  color:var(--text3);font-size:9.5px;
+  text-transform:uppercase;letter-spacing:1.5px;
+  font-family:var(--font-mono);font-weight:400;
+}
+th:first-child{border-radius:7px 0 0 0;}
+th:last-child{border-radius:0 7px 0 0;}
+td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.tid{
+  font-family:var(--font-mono);font-size:11px;
+  color:var(--cyan);background:var(--cyan-dim);
+  padding:2px 7px;border-radius:4px;
+}
+
+/* ═══════ BADGES ═══════ */
+.badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 8px;border-radius:20px;
+  font-size:10px;font-weight:600;
+  font-family:var(--font-mono);
+}
+.badge-cyan{background:var(--cyan-dim);color:var(--cyan);}
+.badge-gold{background:var(--gold-dim);color:var(--gold);}
+.badge-rose{background:var(--rose-dim);color:var(--rose);}
+.badge-em{background:var(--emerald-dim);color:var(--emerald);}
+.badge-vi{background:var(--violet-dim);color:var(--violet);}
+
+/* ═══════ PROGRESS ═══════ */
+.pbar{height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.pfill{height:100%;border-radius:4px;transition:width .6s;}
+.pf-cyan{background:linear-gradient(90deg,var(--cyan),var(--cyan2));}
+.pf-gold{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.pf-rose{background:linear-gradient(90deg,var(--rose),#ff7a8a);}
+.pf-em{background:linear-gradient(90deg,var(--emerald),#33ffaa);}
+
+/* ═══════ UPLOAD ZONE ═══════ */
+.dropzone{
+  border:2px dashed var(--border2);border-radius:12px;
+  padding:36px;text-align:center;cursor:pointer;
+  transition:all .25s;
+}
+.dropzone:hover,.dropzone.over{
+  border-color:var(--cyan);
+  background:var(--cyan-dim2);
+}
+.dz-icon{font-size:40px;margin-bottom:10px;opacity:.7;}
+.dz-title{
+  font-family:var(--font-display);
+  font-size:15px;font-weight:600;margin-bottom:4px;
+}
+.dz-sub{color:var(--text3);font-size:12px;}
+.dz-tags{margin-top:12px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+.dz-tag{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:4px;padding:2px 8px;
+  font-size:10px;color:var(--text3);font-family:var(--font-mono);
+}
+
+/* ═══════ AGENT LOG ═══════ */
+.agent-log{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:10px;padding:14px;
+  font-family:var(--font-mono);font-size:11px;
+  line-height:2;color:var(--text3);
+  max-height:200px;overflow-y:auto;
+}
+.log-ok{color:var(--emerald);}
+.log-run{color:var(--cyan);}
+.log-warn{color:var(--gold);}
+.log-err{color:var(--rose);}
+.log-cursor{
+  display:inline-block;width:7px;height:11px;
+  background:var(--cyan);margin-left:3px;
+  vertical-align:middle;
+  animation:blink .7s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ═══════ TIMELINE ═══════ */
+.timeline{position:relative;padding-left:26px;}
+.timeline::before{
+  content:'';position:absolute;left:9px;top:6px;bottom:6px;
+  width:1px;background:var(--border2);
+}
+.tl-item{position:relative;margin-bottom:16px;}
+.tl-item::before{
+  content:'';position:absolute;left:-21px;top:5px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--bg2);border:2px solid var(--border2);
+}
+.tl-item.done::before{background:var(--emerald);border-color:var(--emerald);box-shadow:0 0 7px rgba(0,200,117,.5);}
+.tl-item.run::before{background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 7px rgba(0,212,232,.5);animation:pulse 1.4s infinite;}
+.tl-title{font-weight:600;font-size:13px;margin-bottom:2px;}
+.tl-desc{color:var(--text3);font-size:11.5px;line-height:1.6;}
+
+/* ═══════ OUTPUT BOX ═══════ */
+.output-box{
+  background:var(--bg1);border:1px solid var(--border2);
+  border-radius:10px;padding:18px;
+  font-size:12.5px;line-height:1.9;color:var(--text2);
+  max-height:380px;overflow-y:auto;
+}
+.ob-title{
+  font-family:var(--font-display);font-size:14px;
+  font-weight:700;color:var(--text);margin-bottom:10px;
+}
+.ob-sect{
+  color:var(--cyan);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:2px;font-family:var(--font-mono);
+  margin:12px 0 5px;
+}
+.ob-step{
+  padding-left:14px;border-left:2px solid var(--border2);
+  margin-bottom:4px;color:var(--text);
+}
+.ob-note{color:var(--gold);font-style:italic;}
+.ob-code{
+  font-family:var(--font-mono);font-size:10.5px;
+  background:var(--bg3);padding:1px 5px;border-radius:3px;
+  color:var(--cyan);
+}
+
+/* ═══════ KB CLUSTER CARD ═══════ */
+.cluster-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:10px;padding:15px;margin-bottom:10px;
+  cursor:pointer;transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.cluster-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--border2);transition:.2s;
+}
+.cluster-card:hover{border-color:var(--border3);box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.cluster-card:hover::before{background:var(--cyan);}
+.cc-title{font-weight:600;font-size:13.5px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.cc-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:10.5px;color:var(--text3);font-family:var(--font-mono);}
+
+/* ═══════ TEMPLATE GRID ═══════ */
+.tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.tpl-card{
+  border:1.5px solid var(--border);border-radius:9px;padding:14px;
+  cursor:pointer;text-align:center;transition:all .18s;
+  background:var(--bg2);
+}
+.tpl-card:hover{border-color:var(--border2);}
+.tpl-card.sel{border-color:var(--cyan);background:var(--cyan-dim2);}
+.tpl-icon{font-size:24px;margin-bottom:6px;}
+.tpl-name{font-weight:600;font-size:12.5px;}
+.tpl-sub{font-size:10px;color:var(--text3);margin-top:2px;font-family:var(--font-mono);}
+
+/* ═══════ GAP ITEM ═══════ */
+.gap-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;background:var(--bg2);
+  border:1px solid var(--border);border-radius:9px;margin-bottom:8px;
+  transition:all .18s;
+}
+.gap-item:hover{border-color:var(--border2);}
+.gap-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.gd-rose{background:var(--rose);box-shadow:0 0 6px rgba(255,77,106,.5);}
+.gd-gold{background:var(--gold);box-shadow:0 0 6px rgba(240,165,0,.4);}
+.gd-em{background:var(--emerald);}
+
+/* ═══════ ITSM CARD ═══════ */
+.itsm-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:10px;padding:15px;
+  display:flex;align-items:center;gap:13px;
+  transition:all .2s;cursor:pointer;
+}
+.itsm-card:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(0,0,0,.25);}
+.itsm-card.connected{border-color:rgba(0,200,117,.25);}
+.itsm-logo{
+  width:44px;height:44px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;background:var(--bg3);flex-shrink:0;
+}
+.itsm-name{font-weight:600;font-size:13.5px;}
+.itsm-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* ═══════ PERSONA ═══════ */
+.persona-bar{display:flex;gap:7px;margin-bottom:14px;}
+.p-tab{
+  padding:6px 14px;border-radius:6px;font-size:12px;
+  border:1px solid var(--border2);cursor:pointer;
+  color:var(--text3);transition:all .18s;font-weight:500;
+}
+.p-tab.on{background:var(--cyan-dim);border-color:rgba(0,212,232,.3);color:var(--cyan);}
+
+/* ═══════ KB DECISION TREE ═══════ */
+.kb-q-block{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:10px;padding:15px;margin-bottom:10px;
+}
+.kb-q{font-weight:600;font-size:13.5px;margin-bottom:10px;color:var(--text);}
+.kb-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.kb-opt{
+  padding:7px 15px;border:1.5px solid var(--border2);
+  border-radius:7px;cursor:pointer;font-size:12.5px;
+  color:var(--text2);transition:all .18s;background:var(--bg3);
+}
+.kb-opt:hover,.kb-opt.sel{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim2);}
+
+/* ═══════ AI STREAM BOX ═══════ */
+.ai-box{
+  background:var(--bg1);border:1px solid var(--border2);
+  border-radius:10px;padding:18px;min-height:120px;
+  position:relative;
+}
+.ai-idle{
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:10px;padding:30px;
+  color:var(--text3);text-align:center;
+}
+.ai-idle-icon{font-size:36px;opacity:.3;}
+.ai-spin{
+  width:20px;height:20px;border:2px solid var(--border2);
+  border-top-color:var(--cyan);border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ═══════ MODAL ═══════ */
+.modal-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  z-index:1000;align-items:center;justify-content:center;
+}
+.modal-bg.open{display:flex;}
+.modal{
+  background:var(--bg2);border:1px solid var(--border3);
+  border-radius:16px;padding:28px;
+  width:640px;max-width:94vw;max-height:88vh;
+  overflow-y:auto;position:relative;
+  box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 1px rgba(0,212,232,0.08);
+  animation:mopen .22s ease;
+}
+@keyframes mopen{from{opacity:0;transform:scale(.95) translateY(10px);}to{opacity:1;transform:none;}}
+.modal-title{
+  font-family:var(--font-display);font-size:20px;font-weight:700;
+  margin-bottom:4px;color:var(--text);
+}
+.modal-sub{font-size:12.5px;color:var(--text3);margin-bottom:20px;}
+.modal-close{
+  position:absolute;top:16px;right:16px;
+  background:var(--glass2);border:1px solid var(--border);
+  border-radius:6px;width:28px;height:28px;
+  font-size:15px;cursor:pointer;color:var(--text3);
+  display:flex;align-items:center;justify-content:center;
+  transition:.15s;
+}
+.modal-close:hover{background:var(--glass3);color:var(--text);}
+
+/* ═══════ TOAST ═══════ */
+.toast-stack{position:fixed;bottom:22px;right:22px;z-index:2000;display:flex;flex-direction:column;gap:7px;}
+.toast{
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-left:3px solid var(--cyan);
+  border-radius:10px;padding:12px 14px;
+  display:flex;align-items:flex-start;gap:10px;
+  min-width:290px;max-width:370px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  animation:tin .25s ease;
+}
+@keyframes tin{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
+.toast-icon{font-size:17px;flex-shrink:0;margin-top:1px;}
+.toast-title{font-weight:600;font-size:12.5px;color:var(--text);}
+.toast-msg{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;}
+
+/* ═══════ UTILITY ═══════ */
+.divider{height:1px;background:var(--border);margin:16px 0;}
+.flex{display:flex;}.fca{align-items:center;}.fcb{justify-content:space-between;}
+.g8{gap:8px;}.g10{gap:10px;}.g12{gap:12px;}.g16{gap:16px;}
+.mt8{margin-top:8px;}.mt12{margin-top:12px;}.mt16{margin-top:16px;}
+.mb12{margin-bottom:12px;}.mb16{margin-bottom:16px;}
+.ml-auto{margin-left:auto;}
+.mono{font-family:var(--font-mono);}
+.text-sm{font-size:11.5px;}.text-xs{font-size:10.5px;}
+.text-muted{color:var(--text3);}
+.fw6{font-weight:600;}
+.full-w{width:100%;}
+
+/* ═══════ HEALTH SCORE WIDGET ═══════ */
+.health-row{display:flex;flex-direction:column;gap:11px;}
+.health-item{display:flex;flex-direction:column;gap:4px;}
+.health-label-row{display:flex;justify-content:space-between;font-size:12px;}
+
+/* ═══════ STEP WIZARD ═══════ */
+.step-wizard{
+  display:flex;align-items:center;
+  gap:0;margin-bottom:20px;
+}
+.sw-step{
+  display:flex;align-items:center;gap:8px;
+  font-size:11.5px;font-weight:500;color:var(--text3);
+}
+.sw-num{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--bg3);border:1.5px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-family:var(--font-mono);flex-shrink:0;
+}
+.sw-step.done .sw-num{background:var(--emerald);border-color:var(--emerald);color:var(--bg0);}
+.sw-step.active .sw-num{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan);}
+.sw-step.active{color:var(--text);}
+.sw-line{flex:1;height:1px;background:var(--border);margin:0 8px;}
+.sw-line.done{background:var(--emerald);}
+
+/* ═══════ INFO PILL ═══════ */
+.info-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:6px;padding:5px 10px;
+  font-size:11px;color:var(--text2);
+  font-family:var(--font-mono);
+}
+
+/* ═══════ CHAT BUBBLE ═══════ */
+.chat-box{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:9px;padding:13px;
+  font-size:12px;font-family:var(--font-mono);
+  line-height:1.9;color:var(--text2);
+  margin:10px 0;
+}
+.cu{color:var(--emerald);}
+.cl{color:var(--cyan);}
+.ct{color:var(--text3);}
+
+/* ═══════ SECTION HEADER ═══════ */
+.section-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.section-title{
+  font-family:var(--font-display);
+  font-size:12px;font-weight:700;
+  color:var(--text2);text-transform:uppercase;
+  letter-spacing:1.5px;
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══════════════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="logo-area">
+    <div class="logo-name">Ops<span class="logo-dna">DNA</span></div>
+    <div class="logo-sub">AMS Knowledge Intelligence</div>
+    <div class="version-chip"><div class="v-dot"></div>v3.0 · Agent Active</div>
+  </div>
+
+  <div class="nav-scroll">
+    <div class="nav-sect">Command</div>
+    <div class="nav-item active" onclick="navGo('dashboard',this)">
+      <span class="nav-icon">◈</span> Mission Control
+    </div>
+
+    <div class="nav-sect">SOP Engine</div>
+    <div class="nav-item" onclick="navGo('sop-tickets',this)">
+      <span class="nav-icon">⊞</span> From Tickets
+      <span class="nav-badge nb-rose">12 new</span>
+    </div>
+    <div class="nav-item" onclick="navGo('sop-docs',this)">
+      <span class="nav-icon">⊟</span> From Documents
+    </div>
+    <div class="nav-item" onclick="navGo('sop-template',this)">
+      <span class="nav-icon">⊡</span> Template Builder
+    </div>
+    <div class="nav-item" onclick="navGo('sop-library',this)">
+      <span class="nav-icon">⊞</span> SOP Library
+    </div>
+
+    <div class="nav-sect">KB Engine</div>
+    <div class="nav-item" onclick="navGo('kb-gen',this)">
+      <span class="nav-icon">✦</span> KB Generator
+      <span class="nav-badge nb-cyan">AI Live</span>
+    </div>
+    <div class="nav-item" onclick="navGo('kb-health',this)">
+      <span class="nav-icon">◉</span> Health Monitor
+      <span class="nav-badge nb-rose">3 stale</span>
+    </div>
+    <div class="nav-item" onclick="navGo('kb-gap',this)">
+      <span class="nav-icon">◎</span> Gap Radar
+      <span class="nav-badge nb-gold">7 gaps</span>
+    </div>
+    <div class="nav-item" onclick="navGo('kb-active',this)">
+      <span class="nav-icon">⟳</span> Active KB
+    </div>
+    <div class="nav-item" onclick="navGo('kb-contra',this)">
+      <span class="nav-icon">≠</span> Contradiction Engine
+    </div>
+
+    <div class="nav-sect">Integrations</div>
+    <div class="nav-item" onclick="navGo('itsm',this)">
+      <span class="nav-icon">⇌</span> ITSM Connect
+    </div>
+    <div class="nav-item" onclick="navGo('chat-mining',this)">
+      <span class="nav-icon">⛏</span> Chat Mining
+      <span class="nav-badge nb-emerald">Live</span>
+    </div>
+  </div>
+
+  <div class="agent-footer">
+    <div class="agent-status-bar" onclick="toast('🤖 OpsDNA Agent','Analyzed 34 tickets · 3 SOPs queued · KB decay scan 78% complete')">
+      <div class="agent-avatar">🧬</div>
+      <div class="agent-text">
+        <div class="agent-name">OpsDNA Agent</div>
+        <div class="agent-state">● Running · 34 tickets today</div>
+      </div>
+      <div class="pulse-dot"></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════
+     MAIN AREA
+═══════════════════════════════════════════ -->
+<div class="main-wrap">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="page-title" id="ptitle">Mission Control <span>Command Center</span></div>
+    <div class="itsm-live"><div class="live-dot"></div>ServiceNow · Synced 4m ago</div>
+    <button class="btn btn-ghost btn-sm" onclick="toast('🔄 ITSM Sync','Fetching latest resolved tickets from ServiceNow…')">⟳ Sync</button>
+    <button class="btn btn-cyan btn-sm" onclick="openModal('m-quick')">⚡ Quick Generate</button>
+  </div>
+
+  <!-- ════════════════ DASHBOARD ════════════════ -->
+  <div id="page-dashboard" class="page-content">
+    <div class="stats-grid">
+      <div class="stat-card sc-cyan">
+        <div class="stat-num sn-cyan">148</div>
+        <div class="stat-lbl">SOPs Generated</div>
+        <div class="stat-delta d-up">↑ 23 this month</div>
+      </div>
+      <div class="stat-card sc-gold">
+        <div class="stat-num sn-gold">312</div>
+        <div class="stat-lbl">KB Articles</div>
+        <div class="stat-delta d-up">↑ 41 this month</div>
+      </div>
+      <div class="stat-card sc-em">
+        <div class="stat-num sn-em">87%</div>
+        <div class="stat-lbl">L1 Deflection</div>
+        <div class="stat-delta d-up">↑ 12% vs last month</div>
+      </div>
+      <div class="stat-card sc-rose">
+        <div class="stat-num sn-rose">7</div>
+        <div class="stat-lbl">KB Gaps Found</div>
+        <div class="stat-delta d-dn">3 unresolved</div>
+      </div>
+    </div>
+
+    <div class="g2 g16">
+      <!-- Agent Log -->
+      <div class="card accent-cyan card-glow-cyan">
+        <div class="card-h">
+          <div><div class="card-title">🧬 OpsDNA Agent — Live Log</div><div class="card-sub">Autonomous actions running in background</div></div>
+          <span class="badge badge-em">● Active</span>
+        </div>
+        <div class="agent-log">
+          <span class="log-ok">✓ COMPLETE</span> &nbsp;ServiceNow PROD sync — 34 tickets ingested (24h)<br>
+          <span class="log-ok">✓ COMPLETE</span> &nbsp;Cluster analysis — 3 recurring SOP patterns found<br>
+          <span class="log-ok">✓ COMPLETE</span> &nbsp;SOP-0847 "SAP Fiori Monday Reset" auto-drafted &amp; queued<br>
+          <span class="log-run">▶ RUNNING &nbsp;</span> KB health decay scan — 78% complete<span class="log-cursor"></span><br>
+          <span class="log-warn">⚑ QUEUED &nbsp;</span> Chat mining: Teams #sap-support (48h window)<br>
+          <span class="log-warn">⚑ QUEUED &nbsp;</span> Contradiction scan: KB-2041 ↔ KB-3187
+        </div>
+        <div class="mt12">
+          <div class="timeline">
+            <div class="tl-item done"><div class="tl-title">SOP Auto-Drafted</div><div class="tl-desc">INC-4821 cluster → SOP-0847 "SAP Fiori Monday Reset" · Awaiting publish · 3 min ago</div></div>
+            <div class="tl-item done"><div class="tl-title">KB Draft Queued</div><div class="tl-desc">Oracle EBS login failure · 9 occurrences matched · Draft ready · 22 min ago</div></div>
+            <div class="tl-item run"><div class="tl-title">Health Decay Alert</div><div class="tl-desc">KB-2041 "Payroll Module" — 6 months unvalidated + 4 app releases since · Urgent</div></div>
+            <div class="tl-item"><div class="tl-title">Gap Radar — New Gap Found</div><div class="tl-desc">"Vendor Invoice Stuck" — 9 tickets, 0 KB coverage · Highest priority draft needed</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <!-- KB Health -->
+        <div class="card accent-gold">
+          <div class="card-h">
+            <div><div class="card-title">◉ KB Health Snapshot</div><div class="card-sub">Freshness scores across active articles</div></div>
+            <button class="btn btn-ghost btn-xs" onclick="navGo('kb-health',null)">View All</button>
+          </div>
+          <div class="health-row">
+            <div class="health-item">
+              <div class="health-label-row"><span class="text-sm">KB-1042 · SAP Fiori Reset</span><span class="mono text-xs" style="color:var(--emerald)">94%</span></div>
+              <div class="pbar"><div class="pfill pf-em" style="width:94%"></div></div>
+            </div>
+            <div class="health-item">
+              <div class="health-label-row"><span class="text-sm">KB-2031 · Oracle DB Timeout</span><span class="mono text-xs" style="color:var(--gold)">62%</span></div>
+              <div class="pbar"><div class="pfill pf-gold" style="width:62%"></div></div>
+            </div>
+            <div class="health-item">
+              <div class="health-label-row"><span class="text-sm">KB-2041 · Payroll Module <span class="badge-rose" style="font-size:9px;padding:1px 5px;border-radius:3px;">URGENT</span></span><span class="mono text-xs" style="color:var(--rose)">28%</span></div>
+              <div class="pbar"><div class="pfill pf-rose" style="width:28%"></div></div>
+            </div>
+            <div class="health-item">
+              <div class="health-label-row"><span class="text-sm">KB-1001 · AD Password Reset</span><span class="mono text-xs" style="color:var(--emerald)">88%</span></div>
+              <div class="pbar"><div class="pfill pf-em" style="width:88%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="card accent-violet">
+          <div class="card-title mb12">⚡ Quick Actions</div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <button class="btn btn-ghost full-w" onclick="navGo('sop-tickets',null)" style="justify-content:flex-start;"><span>📋</span> Generate SOP from pending tickets</button>
+            <button class="btn btn-ghost full-w" onclick="navGo('kb-gap',null)" style="justify-content:flex-start;"><span>◎</span> Review 7 KB gaps detected</button>
+            <button class="btn btn-ghost full-w" onclick="navGo('kb-health',null)" style="justify-content:flex-start;"><span>⚠</span> Resolve 3 stale KB articles</button>
+            <button class="btn btn-ghost full-w" onclick="navGo('chat-mining',null)" style="justify-content:flex-start;"><span>⛏</span> Convert 2 Teams threads to KB</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ SOP FROM TICKETS ════════════════ -->
+  <div id="page-sop-tickets" class="page-content hidden">
+    <!-- Step Wizard -->
+    <div class="step-wizard">
+      <div class="sw-step done"><div class="sw-num">✓</div><span>Connect ITSM</span></div>
+      <div class="sw-line done"></div>
+      <div class="sw-step active"><div class="sw-num">2</div><span>Filter & Fetch</span></div>
+      <div class="sw-line"></div>
+      <div class="sw-step"><div class="sw-num">3</div><span>AI Cluster</span></div>
+      <div class="sw-line"></div>
+      <div class="sw-step"><div class="sw-num">4</div><span>Generate SOP</span></div>
+      <div class="sw-line"></div>
+      <div class="sw-step"><div class="sw-num">5</div><span>Review & Publish</span></div>
+    </div>
+
+    <div class="g2 g16">
+      <div class="card accent-cyan">
+        <div class="card-h"><div><div class="card-title">⊞ Ticket Filter</div><div class="card-sub">Pull resolved tickets from your ITSM</div></div></div>
+        <div class="fg"><label class="fl">ITSM Source</label>
+          <select class="fsel"><option>ServiceNow — Production</option><option>Jira Service Desk</option><option>BMC Remedy</option><option>Freshservice</option></select>
+        </div>
+        <div class="g2 g12">
+          <div class="fg"><label class="fl">Date Range</label>
+            <select class="fsel"><option>Last 30 days</option><option>Last 90 days</option><option>Last 6 months</option></select>
+          </div>
+          <div class="fg"><label class="fl">Min. Occurrences</label>
+            <input type="number" class="fi" value="3" min="1">
+          </div>
+        </div>
+        <div class="g2 g12">
+          <div class="fg"><label class="fl">Application</label>
+            <select class="fsel"><option>All</option><option>SAP S/4HANA</option><option>Oracle EBS</option><option>Salesforce</option></select>
+          </div>
+          <div class="fg"><label class="fl">Resolution Level</label>
+            <select class="fsel"><option>All (L1+L2+L3)</option><option>L1 Only</option><option>L2 Escalated</option></select>
+          </div>
+        </div>
+        <div class="fg"><label class="fl">Ticket Priority Filter</label>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <label class="info-pill" style="cursor:pointer;"><input type="checkbox" checked style="margin-right:4px;">P1</label>
+            <label class="info-pill" style="cursor:pointer;"><input type="checkbox" checked style="margin-right:4px;">P2</label>
+            <label class="info-pill" style="cursor:pointer;"><input type="checkbox" style="margin-right:4px;">P3</label>
+            <label class="info-pill" style="cursor:pointer;"><input type="checkbox" style="margin-right:4px;">P4</label>
+          </div>
+        </div>
+        <button class="btn btn-cyan full-w" onclick="runTicketScan()">🔍 Fetch &amp; AI-Cluster Tickets</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><div><div class="card-title">AI-Identified Clusters</div><div class="card-sub">Recurring patterns ready for SOP generation</div></div></div>
+        <div class="cluster-card" onclick="openModal('m-sop-out')">
+          <div class="cc-title">SAP Fiori Dashboard Unresponsive (Monday) <span class="badge badge-rose">Critical</span></div>
+          <div class="cc-meta"><span>🎫 14 tickets</span><span>📅 Weekly</span><span>⏱ MTTR 45m</span><span>L2: 100%</span></div>
+          <div class="flex fca g8 mt8">
+            <button class="btn btn-cyan btn-sm" onclick="event.stopPropagation();openModal('m-sop-out')">✦ Generate SOP</button>
+            <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">View Tickets</button>
+          </div>
+        </div>
+        <div class="cluster-card">
+          <div class="cc-title">Oracle EBS Login Timeout — Finance <span class="badge badge-rose">High</span></div>
+          <div class="cc-meta"><span>🎫 9 tickets</span><span>📅 Month-end</span><span>⏱ MTTR 20m</span><span>L1: 67%</span></div>
+          <div class="flex fca g8 mt8">
+            <button class="btn btn-cyan btn-sm" onclick="toast('✦','Generating SOP from 9 Oracle EBS tickets…')">✦ Generate SOP</button>
+            <button class="btn btn-ghost btn-sm">View Tickets</button>
+          </div>
+        </div>
+        <div class="cluster-card">
+          <div class="cc-title">AD Password Reset — VPN Users <span class="badge badge-em">Low</span></div>
+          <div class="cc-meta"><span>🎫 22 tickets</span><span>📅 Daily</span><span>⏱ MTTR 5m</span><span>L1: 95%</span></div>
+          <div class="flex fca g8 mt8">
+            <button class="btn btn-cyan btn-sm" onclick="toast('✦','SOP generated · 5 steps · Template applied')">✦ Generate SOP</button>
+            <button class="btn btn-ghost btn-sm">View Tickets</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ SOP FROM DOCS ════════════════ -->
+  <div id="page-sop-docs" class="page-content hidden">
+    <div class="g2 g16">
+      <div>
+        <div class="card accent-violet mb12" style="margin-bottom:14px;">
+          <div class="card-h"><div><div class="card-title">⊟ Upload Source Document</div><div class="card-sub">AI reads, extracts steps, detects gaps</div></div></div>
+          <div class="dropzone" id="dz-doc" onclick="toast('📄','process_guide_v3.pdf loaded — extracting…')">
+            <div class="dz-icon">📂</div>
+            <div class="dz-title">Drop document here</div>
+            <div class="dz-sub">or click to browse</div>
+            <div class="dz-tags">
+              <span class="dz-tag">PDF</span><span class="dz-tag">DOCX</span>
+              <span class="dz-tag">XLSX</span><span class="dz-tag">PPT</span>
+              <span class="dz-tag">TXT</span><span class="dz-tag">Image/Scan</span>
+            </div>
+          </div>
+          <div class="fg mt12"><label class="fl">Document Type</label>
+            <select class="fsel"><option>Process Guide / Runbook</option><option>Old SOP (needs reformatting)</option><option>Incident Report</option><option>Vendor Manual</option><option>Email / Chat Export</option></select>
+          </div>
+          <div class="fg"><label class="fl">Target Application</label>
+            <select class="fsel"><option>SAP S/4HANA</option><option>Oracle EBS</option><option>Salesforce</option><option>Other / Custom</option></select>
+          </div>
+          <button class="btn btn-cyan full-w" onclick="toast('🧠','Analysing document — extracting steps, roles, decision points…')">🧠 Extract &amp; Structure</button>
+        </div>
+      </div>
+      <div class="card accent-gold">
+        <div class="card-h"><div><div class="card-title">🔍 AI Extraction Result</div><div class="card-sub">Detected structure + gap analysis</div></div></div>
+        <div class="agent-log mb12" style="margin-bottom:12px;">
+          <span class="log-ok">✓</span> 6 procedural steps extracted<br>
+          <span class="log-ok">✓</span> 3 roles identified: L1, DBA, SAP Admin<br>
+          <span class="log-ok">✓</span> 2 conditional branches detected<br>
+          <span class="log-warn">⚑ GAP</span> Missing rollback / undo steps<br>
+          <span class="log-warn">⚑ GAP</span> No escalation contact found
+        </div>
+        <div class="timeline">
+          <div class="tl-item done"><div class="tl-title">Verify user-reported symptom</div><div class="tl-desc">Confirm error code · Check if isolated or widespread</div></div>
+          <div class="tl-item done"><div class="tl-title">Check batch job schedule</div><div class="tl-desc">SAP Admin → SM37 → Review Sunday night jobs</div></div>
+          <div class="tl-item done"><div class="tl-title">Identify locked table</div><div class="tl-desc">SE11 → check FIORI_CACHE_T lock status</div></div>
+          <div class="tl-item run"><div class="tl-title">Execute unlock script [⚑ Needs review]</div><div class="tl-desc">Script version unclear — verify before publishing</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="flex fca g8">
+          <button class="btn btn-cyan" onclick="openModal('m-sop-out')">✦ Generate Full SOP</button>
+          <button class="btn btn-ghost" onclick="toast('⚑','2 gaps flagged in the generated SOP')">Flag Gaps Only</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ TEMPLATE BUILDER ════════════════ -->
+  <div id="page-sop-template" class="page-content hidden">
+    <div class="g2 g16">
+      <div>
+        <div class="card mb12" style="margin-bottom:14px;">
+          <div class="card-h"><div><div class="card-title">⊡ Client Template Library</div><div class="card-sub">Every SOP output will follow this format</div></div></div>
+          <div class="tpl-grid">
+            <div class="tpl-card sel" onclick="pickTpl(this)"><div class="tpl-icon">🏢</div><div class="tpl-name">Accenture</div><div class="tpl-sub">Standard AMS</div></div>
+            <div class="tpl-card" onclick="pickTpl(this)"><div class="tpl-icon">🔵</div><div class="tpl-name">TCS</div><div class="tpl-sub">ITIL-aligned</div></div>
+            <div class="tpl-card" onclick="pickTpl(this)"><div class="tpl-icon">🟠</div><div class="tpl-name">Infosys</div><div class="tpl-sub">Numbered sections</div></div>
+            <div class="tpl-card" onclick="pickTpl(this)"><div class="tpl-icon">📗</div><div class="tpl-name">ITIL v4</div><div class="tpl-sub">Best practice</div></div>
+            <div class="tpl-card" onclick="pickTpl(this)"><div class="tpl-icon">🏦</div><div class="tpl-name">Banking SOP</div><div class="tpl-sub">Compliance-heavy</div></div>
+            <div class="tpl-card" onclick="toast('📤','Drop your .docx or .xlsx template file')"><div class="tpl-icon">＋</div><div class="tpl-name">Upload Custom</div><div class="tpl-sub">Your own format</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title mb12">⚙ Template Configuration</div>
+          <div class="fg"><label class="fl">Numbering Style</label>
+            <select class="fsel"><option>1.0 / 1.1 / 1.1.1 (Hierarchical)</option><option>Step 1 / Step 2 (Simple)</option><option>A / B / C (Alphabetic)</option></select>
+          </div>
+          <div class="fg"><label class="fl">Writing Tone</label>
+            <select class="fsel"><option>Formal — Imperative ("Execute the following…")</option><option>Neutral — Descriptive ("The agent should…")</option><option>Plain — Simple ("Click → Select → Done")</option></select>
+          </div>
+          <div class="fg"><label class="fl">Required Sections</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:5px;">
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer;"><input type="checkbox" checked> Purpose</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer;"><input type="checkbox" checked> Scope</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer;"><input type="checkbox" checked> Pre-requisites</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer;"><input type="checkbox" checked> Steps</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer;"><input type="checkbox" checked> Escalation</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer;"><input type="checkbox"> Rollback</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer;"><input type="checkbox"> Change Log</label>
+            </div>
+          </div>
+          <button class="btn btn-cyan" onclick="toast('✓ Saved','Accenture template will be used for all future SOPs')">Save Template Config</button>
+        </div>
+      </div>
+      <div class="card accent-cyan card-glow-cyan">
+        <div class="card-h"><div><div class="card-title">👁 Live Template Preview</div><div class="card-sub">How every generated SOP will look</div></div></div>
+        <div class="output-box">
+          <div class="ob-title">📋 SOP-2026-0847 · SAP Fiori Dashboard Reset</div>
+          <div class="ob-sect">1.0 PURPOSE</div>
+          Restore SAP Fiori launchpad availability every Monday morning following a batch job conflict locking the Fiori cache table on Sunday nights.
+          <div class="ob-sect">2.0 SCOPE &amp; ROLES</div>
+          <div class="ob-step">L1 Agent — Triage, user comms, ticket logging</div>
+          <div class="ob-step">SAP Basis (L2) — Technical fix execution</div>
+          <div class="ob-sect">3.0 PRE-REQUISITES</div>
+          <div class="ob-step">3.1 SAP Basis credentials</div>
+          <div class="ob-step">3.2 Access: transactions SM37, SE38, SMICM</div>
+          <div class="ob-step">3.3 Teams channel: #sap-basis-team</div>
+          <div class="ob-sect">4.0 PROCEDURE</div>
+          <div class="ob-step">4.1 [L1] Log P2 ticket · Category: SAP › Fiori</div>
+          <div class="ob-step">4.2 [L1] Notify users — ETA 10 min</div>
+          <div class="ob-step">4.3 [L2] SM37 → Confirm FIORI_SYNC_JOB = LOCKED</div>
+          <div class="ob-step">4.4 [L2] SE38 → Run <span class="ob-code">Z_FIORI_CACHE_RESET</span> (user=*)</div>
+          <div class="ob-step">4.5 [L2] SMICM → Restart ICM → Confirm HTTP up</div>
+          <div class="ob-step">4.6 [L1] Validate with reporter → Close ticket</div>
+          <div class="ob-sect">5.0 ESCALATION</div>
+          <span class="ob-note">Unresolved &gt;15 min → Basis L3 · basis-l3@org.com</span>
+          <div class="ob-sect">6.0 VERSION HISTORY</div>
+          v1.0 · Auto-generated by OpsDNA · May 2026
+        </div>
+        <div class="flex fca g8 mt12">
+          <button class="btn btn-gold btn-sm" onclick="toast('📥','SOP-0847_Accenture_Template.docx downloading…')">📥 Export DOCX</button>
+          <button class="btn btn-ghost btn-sm" onclick="toast('📋','SOP content copied to clipboard')">📋 Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ SOP LIBRARY ════════════════ -->
+  <div id="page-sop-library" class="page-content hidden">
+    <div class="card">
+      <div class="card-h">
+        <div><div class="card-title">⊞ SOP Library</div><div class="card-sub">148 SOPs · Version controlled · Template-formatted</div></div>
+        <div class="flex fca g8">
+          <input class="fi" placeholder="🔍 Search SOPs…" style="width:200px;">
+          <select class="fsel" style="width:140px;"><option>All Categories</option><option>SAP</option><option>Oracle</option><option>Access</option></select>
+        </div>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>SOP ID</th><th>Title</th><th>Category</th><th>Version</th><th>Source</th><th>Created</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tid">SOP-0847</span></td><td>SAP Fiori Monday Reset</td><td><span class="badge badge-cyan">SAP</span></td><td class="mono text-xs">v1.2</td><td><span class="badge badge-vi">Tickets</span></td><td class="text-xs text-muted">23 May 26</td><td><span class="badge badge-em">Published</span></td><td><div class="flex fca g8"><button class="btn btn-ghost btn-xs" onclick="openModal('m-sop-out')">View</button><button class="btn btn-ghost btn-xs" onclick="toast('📥','SOP-0847.docx exported')">Export</button></div></td></tr>
+            <tr><td><span class="tid">SOP-0831</span></td><td>Oracle EBS Login Fix</td><td><span class="badge badge-gold">Oracle</span></td><td class="mono text-xs">v2.0</td><td><span class="badge badge-vi">Tickets</span></td><td class="text-xs text-muted">18 May 26</td><td><span class="badge badge-em">Published</span></td><td><div class="flex fca g8"><button class="btn btn-ghost btn-xs">View</button><button class="btn btn-ghost btn-xs" onclick="toast('📥','SOP-0831.docx exported')">Export</button></div></td></tr>
+            <tr><td><span class="tid">SOP-0812</span></td><td>AD Password Reset — VPN</td><td><span class="badge badge-em">Access</span></td><td class="mono text-xs">v3.1</td><td><span class="badge badge-cyan">Document</span></td><td class="text-xs text-muted">01 May 26</td><td><span class="badge badge-em">Published</span></td><td><div class="flex fca g8"><button class="btn btn-ghost btn-xs">View</button><button class="btn btn-ghost btn-xs" onclick="toast('📥','SOP-0812.docx exported')">Export</button></div></td></tr>
+            <tr><td><span class="tid">SOP-0856</span></td><td>Vendor Invoice MIRO Fix</td><td><span class="badge badge-cyan">SAP MM</span></td><td class="mono text-xs">v1.0</td><td><span class="badge badge-gold">Chat Mining</span></td><td class="text-xs text-muted">23 May 26</td><td><span class="badge badge-gold">Draft</span></td><td><div class="flex fca g8"><button class="btn btn-cyan btn-xs" onclick="toast('✓','SOP-0856 published to library')">Publish</button><button class="btn btn-ghost btn-xs">Edit</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ KB GENERATOR (AI-POWERED) ════════════════ -->
+  <div id="page-kb-gen" class="page-content hidden">
+    <div class="tabbar" id="kbtabs">
+      <div class="tabbtn on" onclick="swTab('kbtabs','kbp-ticket',this)">🎫 From Ticket</div>
+      <div class="tabbtn" onclick="swTab('kbtabs','kbp-manual',this)">✍ Manual + AI</div>
+      <div class="tabbtn" onclick="swTab('kbtabs','kbp-persona',this)">👥 Persona View</div>
+    </div>
+
+    <!-- From Ticket (AI-powered) -->
+    <div id="kbp-ticket">
+      <div class="g2 g16">
+        <div class="card accent-cyan">
+          <div class="card-h"><div><div class="card-title">🎫 Source Ticket</div><div class="card-sub">AI will generate a KB article from this ticket's data</div></div></div>
+          <div class="fg"><label class="fl">Ticket ID</label><input class="fi" id="kbTicket" value="INC-4821"></div>
+          <div class="fg"><label class="fl">Issue Summary</label><input class="fi" id="kbSummary" value="SAP Fiori dashboard blank every Monday morning for all users"></div>
+          <div class="fg"><label class="fl">Root Cause (known)</label><textarea class="fta" rows="2" id="kbRoot">Sunday batch job FIORI_SYNC_JOB locks table FIORI_CACHE_T. ICM can't clear cache on Monday restart.</textarea></div>
+          <div class="fg"><label class="fl">Resolution Steps (rough)</label><textarea class="fta" rows="3" id="kbResolution">L2 runs Z_FIORI_CACHE_RESET from SE38, then restarts ICM service via SMICM transaction. Takes ~10 min.</textarea></div>
+          <div class="g2 g12">
+            <div class="fg"><label class="fl">KB Type</label><select class="fsel" id="kbType"><option>Break-Fix</option><option>How-To</option><option>FAQ</option><option>Known Error</option></select></div>
+            <div class="fg"><label class="fl">Category</label><select class="fsel" id="kbCat"><option>SAP · Fiori</option><option>Oracle · EBS</option><option>Access Management</option></select></div>
+          </div>
+          <button class="btn btn-cyan full-w" id="kbGenBtn" onclick="generateKB()">✦ Generate KB with AI</button>
+        </div>
+        <div class="card accent-gold">
+          <div class="card-h"><div><div class="card-title">✦ AI-Generated KB Article</div><div class="card-sub">Symptom-first · Search aliases · Confidence scored</div></div></div>
+          <div id="kb-output" class="ai-box">
+            <div class="ai-idle" id="kb-idle">
+              <div class="ai-idle-icon">🧠</div>
+              <div style="font-size:12px;color:var(--text3);">Fill in the ticket details and click<br>"Generate KB with AI" to create an article</div>
+            </div>
+          </div>
+          <div id="kb-btn-row" class="flex fca g8 mt12" style="display:none!important;">
+            <button class="btn btn-emerald btn-sm" onclick="toast('✓ Published','KB article is now live in knowledge base')">✓ Publish</button>
+            <button class="btn btn-ghost btn-sm" onclick="toast('💾','Saved as draft for review')">Save Draft</button>
+            <button class="btn btn-ghost btn-sm" onclick="toast('📥','KB article exported')">📥 Export</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual -->
+    <div id="kbp-manual" class="hidden">
+      <div class="card">
+        <div class="card-h"><div><div class="card-title">✍ Manual KB with AI Structuring</div><div class="card-sub">Paste rough notes — AI formats into professional KB</div></div></div>
+        <div class="g3 g12 mb12">
+          <div class="fg" style="margin-bottom:0"><label class="fl">Article Title</label><input class="fi" placeholder="e.g. SAP Fiori blank after login"></div>
+          <div class="fg" style="margin-bottom:0"><label class="fl">Category</label><select class="fsel"><option>SAP</option><option>Oracle</option><option>Access Mgmt</option></select></div>
+          <div class="fg" style="margin-bottom:0"><label class="fl">Priority</label><select class="fsel"><option>P1 Critical</option><option>P2 High</option><option>P3 Medium</option></select></div>
+        </div>
+        <div class="fg"><label class="fl">User-Reported Symptom (user language)</label><input class="fi" placeholder="How does the user describe this?"></div>
+        <div class="fg"><label class="fl">Paste Raw Notes / Chat / Email / Anything</label>
+          <textarea class="fta" rows="6" placeholder="Paste anything — chat messages, rough bullet points, email threads. AI will structure it into a proper KB article with all required sections."></textarea>
+        </div>
+        <div class="flex fca g8">
+          <button class="btn btn-cyan" onclick="toast('🧠','AI formatting your notes into a structured KB article…')">🧠 Structure with AI</button>
+          <button class="btn btn-ghost" onclick="toast('💾','Raw draft saved')">Save Raw Draft</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Persona -->
+    <div id="kbp-persona" class="hidden">
+      <div class="card accent-violet">
+        <div class="card-h"><div><div class="card-title">👥 Persona-Aware KB Generation</div><div class="card-sub">One ticket · Three audiences · Three completely different articles — auto-generated</div></div></div>
+        <div class="persona-bar">
+          <div class="p-tab on" onclick="swPersona(this,'pl1')">👤 L1 Agent</div>
+          <div class="p-tab" onclick="swPersona(this,'pl2')">🔧 L2 Engineer</div>
+          <div class="p-tab" onclick="swPersona(this,'peu')">🙋 End User</div>
+        </div>
+        <div id="pl1" class="output-box">
+          <div class="ob-title">👤 L1 AGENT VERSION — KB-3201</div>
+          <div class="ob-sect">WHAT TO TELL THE USER</div>
+          "We are aware of this issue. Your SAP access will be restored in approximately 10 minutes. No action needed from your side."
+          <div class="ob-sect">YOUR STEPS</div>
+          <div class="ob-step">1. Log as P2 · Category: SAP › Fiori</div>
+          <div class="ob-step">2. Post in Teams #sap-basis-team: "Fiori down — Monday reset needed"</div>
+          <div class="ob-step">3. Update ticket every 10 min until resolved</div>
+          <div class="ob-step">4. Confirm with reporter after Basis team confirms fix</div>
+          <div class="ob-sect">DO NOT</div>
+          <span class="ob-note">❌ Do not restart services · ❌ Do not escalate to L3 directly</span>
+        </div>
+        <div id="pl2" class="output-box hidden">
+          <div class="ob-title">🔧 L2 ENGINEER VERSION — KB-3201</div>
+          <div class="ob-sect">ROOT CAUSE</div>
+          Batch job FIORI_SYNC_JOB (Sun 23:00) locks table FIORI_CACHE_T. ICM fails to clear session cache on Monday 07:00 restart.
+          <div class="ob-sect">RESOLUTION</div>
+          <div class="ob-step">1. SM37 → Verify FIORI_SYNC_JOB status = LOCKED</div>
+          <div class="ob-step">2. SE11 → FIORI_CACHE_T → Delete stale lock entries</div>
+          <div class="ob-step">3. SE38 → Run <span class="ob-code">Z_FIORI_CACHE_RESET</span> (user=*)</div>
+          <div class="ob-step">4. SMICM → Restart ICM → Confirm HTTP up</div>
+          <div class="ob-step">5. Test: <span class="ob-code">/sap/bc/ui5_ui5/sap/fiorilaunchpad</span></div>
+          <div class="ob-sect">PERMANENT FIX</div>
+          <span class="ob-note">⚡ Reschedule FIORI_SYNC_JOB to Saturday 21:00 — raise CR</span>
+        </div>
+        <div id="peu" class="output-box hidden">
+          <div class="ob-title">🙋 END USER VERSION — KB-3201</div>
+          <div class="ob-sect">WHAT'S HAPPENING?</div>
+          SAP runs automatic maintenance every Sunday night. Sometimes this causes a brief outage Monday morning. Our team is already working on it.
+          <div class="ob-sect">WHAT SHOULD I DO?</div>
+          <div class="ob-step">✅ Raise a ticket: helpdesk.org or call 1800-XXX-XXXX</div>
+          <div class="ob-step">✅ SAP will be back by 9:00 AM</div>
+          <div class="ob-step">✅ No data is lost — your work is completely safe</div>
+          <div class="ob-sect">WILL THIS KEEP HAPPENING?</div>
+          <span class="ob-note">Our team is implementing a permanent fix. Expected next quarter.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ KB HEALTH ════════════════ -->
+  <div id="page-kb-health" class="page-content hidden">
+    <div class="card mb12" style="margin-bottom:14px;">
+      <div class="agent-log" style="max-height:60px;padding:10px 14px;">
+        <span class="log-run">▶ RUNNING</span> &nbsp;Decay scan: checking all 312 KB articles for freshness + app-release correlation<span class="log-cursor"></span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">
+        <div><div class="card-title">◉ Knowledge Base Health Monitor</div><div class="card-sub">Freshness · App-release correlation · Contradiction flags · SME ping</div></div>
+        <div class="flex fca g8">
+          <button class="btn btn-ghost btn-sm" onclick="toast('📧','3 SMEs pinged for stale article review')">📧 Notify SMEs</button>
+          <button class="btn btn-cyan btn-sm" onclick="toast('🔄','Re-scoring all 312 articles…')">🔄 Re-Score All</button>
+        </div>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>KB ID</th><th>Article Title</th><th>Category</th><th>Health Score</th><th>Last Validated</th><th>App Releases Since</th><th>Contradiction</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tid">KB-1042</span></td><td>SAP Fiori Reset Procedure</td><td><span class="badge badge-cyan">SAP</span></td><td><div class="flex fca g8"><div class="pbar" style="width:70px"><div class="pfill pf-em" style="width:94%"></div></div><span class="mono text-xs" style="color:var(--emerald)">94%</span></div></td><td class="text-xs text-muted">2 days ago</td><td class="mono text-xs" style="text-align:center">0</td><td><span class="badge badge-em">None</span></td><td><button class="btn btn-ghost btn-xs" onclick="openModal('m-sop-out')">View</button></td></tr>
+            <tr><td><span class="tid">KB-2031</span></td><td>Oracle DB Timeout Fix</td><td><span class="badge badge-gold">Oracle</span></td><td><div class="flex fca g8"><div class="pbar" style="width:70px"><div class="pfill pf-gold" style="width:62%"></div></div><span class="mono text-xs" style="color:var(--gold)">62%</span></div></td><td class="text-xs text-muted">3 months ago</td><td class="mono text-xs" style="text-align:center;color:var(--gold)">2</td><td><span class="badge badge-gold">1 conflict</span></td><td><button class="btn btn-gold btn-xs" onclick="toast('📧','oracle-dba@org.com pinged for review')">Ping SME</button></td></tr>
+            <tr><td><span class="tid">KB-2041</span></td><td>Payroll Module Reset</td><td><span class="badge badge-vi">SAP HCM</span></td><td><div class="flex fca g8"><div class="pbar" style="width:70px"><div class="pfill pf-rose" style="width:28%"></div></div><span class="mono text-xs" style="color:var(--rose)">28% ⚠</span></div></td><td class="text-xs" style="color:var(--rose)">6 months ago</td><td class="mono text-xs" style="text-align:center;color:var(--rose)">4</td><td><span class="badge badge-rose">⚠ Critical</span></td><td><button class="btn btn-rose btn-xs" onclick="toast('🚨','KB-2041 flagged urgent — SME notified immediately')">🚨 Urgent</button></td></tr>
+            <tr><td><span class="tid">KB-1001</span></td><td>AD Password Reset VPN</td><td><span class="badge badge-em">Access</span></td><td><div class="flex fca g8"><div class="pbar" style="width:70px"><div class="pfill pf-em" style="width:88%"></div></div><span class="mono text-xs" style="color:var(--emerald)">88%</span></div></td><td class="text-xs text-muted">1 week ago</td><td class="mono text-xs" style="text-align:center">1</td><td><span class="badge badge-em">None</span></td><td><button class="btn btn-ghost btn-xs">View</button></td></tr>
+            <tr><td><span class="tid">KB-3012</span></td><td>SAP Transport Request Error</td><td><span class="badge badge-cyan">SAP Basis</span></td><td><div class="flex fca g8"><div class="pbar" style="width:70px"><div class="pfill pf-gold" style="width:55%"></div></div><span class="mono text-xs" style="color:var(--gold)">55%</span></div></td><td class="text-xs text-muted">4 months ago</td><td class="mono text-xs" style="text-align:center;color:var(--gold)">2</td><td><span class="badge badge-gold">1 conflict</span></td><td><button class="btn btn-gold btn-xs" onclick="toast('📧','basis-team@org.com pinged')">Ping SME</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ GAP RADAR ════════════════ -->
+  <div id="page-kb-gap" class="page-content hidden">
+    <div class="g2 g16">
+      <div class="card accent-rose">
+        <div class="card-h"><div><div class="card-title">◎ KB Gap Radar</div><div class="card-sub">Issues with 0 KB coverage · From tickets + zero-result search logs</div></div></div>
+        <div class="gap-item">
+          <div class="gap-dot gd-rose"></div>
+          <div style="flex:1;"><div class="fw6" style="font-size:13px;">Vendor Invoice Stuck in Approval</div><div class="mono text-xs text-muted">9 tickets · 0 KB · L2 escalation: 100%</div></div>
+          <span class="mono text-xs" style="color:var(--rose)">P1</span>
+          <button class="btn btn-rose btn-sm" onclick="toast('✦','Vendor Invoice KB draft created · Ready for review')">Draft KB</button>
+        </div>
+        <div class="gap-item">
+          <div class="gap-dot gd-gold"></div>
+          <div style="flex:1;"><div class="fw6" style="font-size:13px;">SAP RFC Connection Failure</div><div class="mono text-xs text-muted">7 tickets · 0 KB · Zero-search-results: 14</div></div>
+          <span class="mono text-xs" style="color:var(--gold)">P2</span>
+          <button class="btn btn-gold btn-sm" onclick="toast('✦','RFC Connection KB drafted')">Draft KB</button>
+        </div>
+        <div class="gap-item">
+          <div class="gap-dot gd-gold"></div>
+          <div style="flex:1;"><div class="fw6" style="font-size:13px;">Ariba PO Sync Delay</div><div class="mono text-xs text-muted">5 tickets · 0 KB · Teams mentions: 8</div></div>
+          <span class="mono text-xs" style="color:var(--gold)">P2</span>
+          <button class="btn btn-gold btn-sm" onclick="toast('✦','Ariba PO KB drafted')">Draft KB</button>
+        </div>
+        <div class="gap-item">
+          <div class="gap-dot gd-em"></div>
+          <div style="flex:1;"><div class="fw6" style="font-size:13px;">Oracle Concurrent Manager Stuck</div><div class="mono text-xs text-muted">4 tickets · 0 KB articles</div></div>
+          <span class="mono text-xs" style="color:var(--emerald)">P3</span>
+          <button class="btn btn-ghost btn-sm" onclick="toast('📋','Added to KB backlog')">Queue</button>
+        </div>
+        <div class="gap-item">
+          <div class="gap-dot gd-em"></div>
+          <div style="flex:1;"><div class="fw6" style="font-size:13px;">Salesforce Sandbox Refresh</div><div class="mono text-xs text-muted">3 tickets · 0 KB articles</div></div>
+          <span class="mono text-xs" style="color:var(--emerald)">P3</span>
+          <button class="btn btn-ghost btn-sm" onclick="toast('📋','Added to KB backlog')">Queue</button>
+        </div>
+        <button class="btn btn-cyan full-w mt12" onclick="toast('⚡','5 KB articles bulk-drafted — review in KB Generator')">⚡ Bulk Draft All Gaps</button>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><div class="card-title">🔍 Zero-Result Search Log</div><div class="card-sub">What agents searched and found nothing</div></div></div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Search Term</th><th>Count</th><th>Last</th><th></th></tr></thead>
+            <tbody>
+              <tr><td class="mono text-xs">"vendor invoice approval stuck"</td><td><span class="badge badge-rose">14</span></td><td class="text-xs text-muted">2h ago</td><td><button class="btn btn-ghost btn-xs" onclick="toast('✦','KB drafted from this search pattern')">Draft</button></td></tr>
+              <tr><td class="mono text-xs">"RFC destination error SM59"</td><td><span class="badge badge-gold">11</span></td><td class="text-xs text-muted">5h ago</td><td><button class="btn btn-ghost btn-xs">Draft</button></td></tr>
+              <tr><td class="mono text-xs">"ariba sync not working"</td><td><span class="badge badge-gold">8</span></td><td class="text-xs text-muted">1d ago</td><td><button class="btn btn-ghost btn-xs">Draft</button></td></tr>
+              <tr><td class="mono text-xs">"concurrent manager hung"</td><td><span class="badge badge-cyan">6</span></td><td class="text-xs text-muted">2d ago</td><td><button class="btn btn-ghost btn-xs">Draft</button></td></tr>
+              <tr><td class="mono text-xs">"salesforce sandbox refresh"</td><td><span class="badge badge-cyan">5</span></td><td class="text-xs text-muted">3d ago</td><td><button class="btn btn-ghost btn-xs">Draft</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ ACTIVE KB ════════════════ -->
+  <div id="page-kb-active" class="page-content hidden">
+    <div class="g2 g16">
+      <div class="card accent-cyan">
+        <div class="card-h"><div><div class="card-title">⟳ Active KB — KB-1042</div><div class="card-sub">Decision tree embedded · Answer 2 questions → exact fix surfaces</div></div></div>
+        <div class="kb-q-block">
+          <div class="kb-q">❓ Is the SAP Fiori issue affecting all users or just one user?</div>
+          <div class="kb-opts">
+            <div class="kb-opt sel" onclick="pickKBOpt(this)">All Users / Multiple Teams</div>
+            <div class="kb-opt" onclick="pickKBOpt(this)">Single User Only</div>
+          </div>
+        </div>
+        <div class="kb-q-block">
+          <div class="kb-q">❓ What day / time is it?</div>
+          <div class="kb-opts">
+            <div class="kb-opt sel" onclick="pickKBOpt(this)">Monday Morning</div>
+            <div class="kb-opt" onclick="pickKBOpt(this)">Any Other Day</div>
+          </div>
+        </div>
+        <div class="output-box">
+          <div class="ob-title">✓ EXACT FIX — Confidence 97%</div>
+          <div class="ob-sect">DIAGNOSIS</div>
+          All users + Monday morning → Known FIORI_SYNC_JOB batch lock issue.
+          <div class="ob-sect">L1 AGENT STEPS</div>
+          <div class="ob-step">1. Post in #sap-basis-team: "Monday Fiori reset needed"</div>
+          <div class="ob-step">2. Log P2 ticket · ETA 10 min · Notify reporter</div>
+          <div class="ob-step">3. Close after Basis team confirms fix</div>
+          <div class="ob-sect">L2 ENGINEER STEPS</div>
+          <div class="ob-step">SE38 → Z_FIORI_CACHE_RESET → SMICM restart → Validate</div>
+          <div class="ob-sect">RELATED</div>
+          <span class="ob-note">→ SOP-0847 · KB-2891 · Contradiction check: clear</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><div class="card-title">🛠 Build Decision Tree</div><div class="card-sub">Make any KB article interactive</div></div></div>
+        <div class="fg"><label class="fl">Base KB Article</label>
+          <select class="fsel"><option>KB-1042 · SAP Fiori Reset</option><option>KB-2031 · Oracle DB Timeout</option><option>KB-1001 · AD Password Reset</option></select>
+        </div>
+        <div class="fg"><label class="fl">Question 1 (root branch)</label><input class="fi" placeholder="e.g. Is issue affecting all users or one?"></div>
+        <div class="g2 g12">
+          <div class="fg"><label class="fl">Branch A Label</label><input class="fi" placeholder="All Users"></div>
+          <div class="fg"><label class="fl">Branch B Label</label><input class="fi" placeholder="Single User"></div>
+        </div>
+        <div class="fg"><label class="fl">Question 2 (under Branch A)</label><input class="fi" placeholder="e.g. What day of the week?"></div>
+        <div class="fg"><label class="fl">Resolution for: All Users + Monday</label>
+          <textarea class="fta" rows="3" placeholder="Steps to show when both conditions match…"></textarea>
+        </div>
+        <div class="flex fca g8">
+          <button class="btn btn-cyan" onclick="toast('🌳 Tree Saved','KB-1042 is now interactive with 3 decision branches')">Save Tree</button>
+          <button class="btn btn-ghost" onclick="toast('🧠','AI auto-generated 5 decision branches from KB content')">🧠 Auto-Generate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ CONTRADICTION ENGINE ════════════════ -->
+  <div id="page-kb-contra" class="page-content hidden">
+    <div class="card">
+      <div class="card-h">
+        <div><div class="card-title">≠ Contradiction Engine</div><div class="card-sub">AI scans all KB articles for conflicting steps, duplicates, stale references</div></div>
+        <button class="btn btn-cyan btn-sm" onclick="toast('⚡','Full contradiction scan running across 312 articles…')">▶ Run Full Scan</button>
+      </div>
+      <div class="agent-log mb12" style="margin-bottom:14px;">
+        <span class="log-ok">✓</span> &nbsp;Scan complete — 312 articles analysed · 3 conflicts · 2 duplicates found<br>
+        <span class="log-warn">⚑</span> &nbsp;KB-2041 ↔ KB-3187: Conflicting resolution steps for same Oracle error<br>
+        <span class="log-warn">⚑</span> &nbsp;KB-1001 ↔ KB-1045: Duplicate content — merge recommended<br>
+        <span class="log-warn">⚑</span> &nbsp;KB-0892: References decommissioned tool "RemedyForce" — update needed
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Conflict ID</th><th>Article A</th><th>Article B</th><th>Type</th><th>Severity</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="mono text-xs">CON-001</td><td><span class="tid">KB-2041</span> Payroll Module Reset</td><td><span class="tid">KB-3187</span> Oracle Month-End Fix</td><td><span class="badge badge-rose">Conflicting Steps</span></td><td><span class="badge badge-rose">High</span></td><td><div class="flex fca g8"><button class="btn btn-rose btn-sm" onclick="toast('🔀','Opening merge editor for KB-2041 & KB-3187')">Merge</button><button class="btn btn-ghost btn-sm">Compare</button></div></td></tr>
+            <tr><td class="mono text-xs">CON-002</td><td><span class="tid">KB-1001</span> AD Password Reset</td><td><span class="tid">KB-1045</span> VPN Password Reset</td><td><span class="badge badge-gold">Duplicate</span></td><td><span class="badge badge-gold">Medium</span></td><td><div class="flex fca g8"><button class="btn btn-gold btn-sm" onclick="toast('✓','KB-1045 deprecated — KB-1001 is now master')">Merge</button><button class="btn btn-ghost btn-sm">Compare</button></div></td></tr>
+            <tr><td class="mono text-xs">CON-003</td><td><span class="tid">KB-0892</span> Escalation Steps</td><td>—</td><td><span class="badge badge-cyan">Stale Reference</span></td><td><span class="badge badge-em">Low</span></td><td><div class="flex fca g8"><button class="btn btn-ghost btn-sm" onclick="toast('✏','KB-0892 opened for editing')">Edit KB</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ ITSM CONNECT ════════════════ -->
+  <div id="page-itsm" class="page-content hidden">
+    <div class="card mb12" style="margin-bottom:14px;">
+      <div class="card-h"><div><div class="card-title">⇌ ITSM Integrations</div><div class="card-sub">Connect your ticketing systems for auto ingestion and SOP/KB triggers</div></div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div class="itsm-card connected"><div class="itsm-logo">🎟</div><div><div class="itsm-name">ServiceNow</div><div class="itsm-sub">PROD · 34 tickets/day</div></div><div class="ml-auto"><span class="badge badge-em">● Live</span></div></div>
+        <div class="itsm-card" onclick="toast('🔗','Enter Jira API credentials to connect')"><div class="itsm-logo">🔵</div><div><div class="itsm-name">Jira Service Desk</div><div class="itsm-sub">Not connected</div></div><div class="ml-auto"><button class="btn btn-ghost btn-sm">Connect</button></div></div>
+        <div class="itsm-card" onclick="toast('🔗','Enter BMC Remedy credentials')"><div class="itsm-logo">🟠</div><div><div class="itsm-name">BMC Remedy</div><div class="itsm-sub">Not connected</div></div><div class="ml-auto"><button class="btn btn-ghost btn-sm">Connect</button></div></div>
+        <div class="itsm-card connected"><div class="itsm-logo">💬</div><div><div class="itsm-name">MS Teams</div><div class="itsm-sub">3 channels · Mining active</div></div><div class="ml-auto"><span class="badge badge-em">● Live</span></div></div>
+        <div class="itsm-card" onclick="toast('🔗','Freshservice OAuth starting…')"><div class="itsm-logo">🟢</div><div><div class="itsm-name">Freshservice</div><div class="itsm-sub">Not connected</div></div><div class="ml-auto"><button class="btn btn-ghost btn-sm">Connect</button></div></div>
+        <div class="itsm-card" onclick="toast('🔗','Zendesk OAuth starting…')"><div class="itsm-logo">🟡</div><div><div class="itsm-name">Zendesk</div><div class="itsm-sub">Not connected</div></div><div class="ml-auto"><button class="btn btn-ghost btn-sm">Connect</button></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title mb12">⚙ ServiceNow — Sync Configuration</div>
+      <div class="g3 g12">
+        <div class="fg"><label class="fl">Instance URL</label><input class="fi" value="https://myorg.service-now.com"></div>
+        <div class="fg"><label class="fl">Sync Frequency</label><select class="fsel"><option>Every 1 hour</option><option>Every 4 hours</option><option>Daily midnight</option><option>Real-time (webhook)</option></select></div>
+        <div class="fg"><label class="fl">Auto-Draft KB on Ticket Close</label><select class="fsel"><option>Yes — all tickets</option><option>Yes — P1/P2 only</option><option>No — manual</option></select></div>
+      </div>
+      <div class="g2 g12">
+        <div class="fg"><label class="fl">Auto-Cluster Tickets Into SOP Candidates</label><select class="fsel"><option>Yes — min 3 occurrences</option><option>Yes — min 5 occurrences</option><option>No — manual</option></select></div>
+        <div class="fg"><label class="fl">Notify Team on New Gap Detected</label><select class="fsel"><option>Yes — Teams notification</option><option>Yes — Email digest</option><option>No notifications</option></select></div>
+      </div>
+      <button class="btn btn-cyan" onclick="toast('✓ Saved','ServiceNow integration settings updated')">Save Settings</button>
+    </div>
+  </div>
+
+  <!-- ════════════════ CHAT MINING ════════════════ -->
+  <div id="page-chat-mining" class="page-content hidden">
+    <div class="card accent-emerald mb12" style="margin-bottom:14px;">
+      <div class="card-h"><div><div class="card-title">⛏ Chat Mining Agent — Live</div><div class="card-sub">Monitors Teams/Slack · Detects resolution threads · Auto-drafts KB</div></div><span class="badge badge-em">● Monitoring</span></div>
+      <div class="agent-log">
+        <span class="log-ok">✓ MONITORING</span> &nbsp;Teams: #sap-support — 312 messages scanned today<br>
+        <span class="log-ok">✓ MONITORING</span> &nbsp;Teams: #oracle-team — 88 messages scanned today<br>
+        <span class="log-run">▶ DETECTED &nbsp;</span> 2 resolution threads found — your approval needed<span class="log-cursor"></span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><div class="card-title">💬 Detected Resolution Threads</div><div class="card-sub">AI flagged these conversations as containing new, undocumented knowledge</div></div></div>
+      <div class="cluster-card">
+        <div class="cc-title">Teams · #sap-support · Rajesh M. → Priya K. <span class="badge badge-gold">Review Required</span></div>
+        <div class="chat-box">
+          <span class="cu">Rajesh M.:</span> Hey the vendor invoice is stuck again in T-code MIRO<br>
+          <span class="cl">Priya K.:</span> That's the posting period issue. Go to MMPV first<br>
+          <span class="cl">Priya K.:</span> Open period for current month, then retry MIRO. Works every time 👍<br>
+          <span class="cu">Rajesh M.:</span> That worked! Thanks!! 🙏<br>
+          <span class="ct">— 3 hours ago · #sap-support</span>
+        </div>
+        <div class="flex fca g8">
+          <button class="btn btn-cyan btn-sm" onclick="toast('✦ KB Created','KB-3202: Vendor Invoice Stuck MIRO Posting Period Fix · Published')">✦ Create KB from This</button>
+          <button class="btn btn-ghost btn-sm" onclick="toast('📋','Thread flagged for SOP generation')">Also Create SOP</button>
+          <button class="btn btn-ghost btn-sm" onclick="toast('🗑','Thread dismissed')">Dismiss</button>
+        </div>
+      </div>
+      <div class="cluster-card">
+        <div class="cc-title">Teams · #oracle-team · Kiran B. → Anita S. <span class="badge badge-gold">Review Required</span></div>
+        <div class="chat-box">
+          <span class="cu">Kiran B.:</span> Concurrent Manager stuck — requests queued but not running<br>
+          <span class="cl">Anita S.:</span> Check SysAdmin → CM → Activate. If that doesn't work, bounce concurrent tier<br>
+          <span class="cu">Kiran B.:</span> Activating from SysAdmin did it! 👍<br>
+          <span class="ct">— 7 hours ago · #oracle-team</span>
+        </div>
+        <div class="flex fca g8">
+          <button class="btn btn-cyan btn-sm" onclick="toast('✦ KB Created','KB-3203: Oracle Concurrent Manager Stuck · Draft published')">✦ Create KB from This</button>
+          <button class="btn btn-ghost btn-sm">Also Create SOP</button>
+          <button class="btn btn-ghost btn-sm" onclick="toast('🗑','Thread dismissed')">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main-wrap -->
+</div><!-- /shell -->
+
+<!-- ═══════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════ -->
+
+<!-- SOP Output Modal -->
+<div class="modal-bg" id="m-sop-out">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('m-sop-out')">✕</button>
+    <div class="modal-title">✦ SOP Generated</div>
+    <div class="modal-sub">AI-generated · 14 tickets · Confidence 94% · Accenture template applied</div>
+    <div class="flex fca g8" style="margin-bottom:16px;flex-wrap:wrap;">
+      <span class="badge badge-em">6 Steps</span>
+      <span class="badge badge-cyan">3 Roles</span>
+      <span class="badge badge-gold">1 Branch</span>
+      <span class="badge badge-vi">Accenture Template</span>
+    </div>
+    <div class="output-box">
+      <div class="ob-title">📋 SOP-2026-0847 · SAP Fiori Dashboard Reset (Monday)</div>
+      <div class="ob-sect">1.0 PURPOSE</div>
+      Restore SAP Fiori launchpad availability every Monday morning following a batch job conflict locking the Fiori cache table on Sunday nights.
+      <div class="ob-sect">2.0 SCOPE &amp; ROLES</div>
+      <div class="ob-step">L1 Agent — Triage, user comms, ticket logging</div>
+      <div class="ob-step">SAP Basis (L2) — Technical fix execution</div>
+      <div class="ob-sect">3.0 PRE-REQUISITES</div>
+      <div class="ob-step">3.1 SAP Basis credentials</div>
+      <div class="ob-step">3.2 Transactions: SM37, SE38, SMICM</div>
+      <div class="ob-step">3.3 Teams: #sap-basis-team</div>
+      <div class="ob-sect">4.0 PROCEDURE</div>
+      <div class="ob-step">4.1 [L1] Log P2 · Category: SAP › Fiori</div>
+      <div class="ob-step">4.2 [L1] Notify users — ETA 10 min</div>
+      <div class="ob-step">4.3 [L2] SM37 → Confirm FIORI_SYNC_JOB = LOCKED</div>
+      <div class="ob-step">4.4 [L2] SE38 → Run <span class="ob-code">Z_FIORI_CACHE_RESET</span> (user=*)</div>
+      <div class="ob-step">4.5 [L2] SMICM → Restart ICM → Confirm HTTP up</div>
+      <div class="ob-step">4.6 [L1] Validate with reporter → Close ticket</div>
+      <div class="ob-sect">5.0 ESCALATION</div>
+      <span class="ob-note">Unresolved &gt;15 min → Basis L3 · basis-l3@org.com</span>
+      <div class="ob-sect">6.0 VERSION HISTORY</div>
+      v1.0 · Auto-generated by OpsDNA · May 2026
+    </div>
+    <div class="flex fca g8 mt12">
+      <button class="btn btn-emerald" onclick="toast('✓ Published','SOP-0847 is live in the SOP Library');closeModal('m-sop-out')">✓ Publish</button>
+      <button class="btn btn-gold" onclick="toast('📥','SOP-0847_Accenture.docx downloading…');closeModal('m-sop-out')">📥 Export DOCX</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-sop-out')">✏ Edit Draft</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Generate Modal -->
+<div class="modal-bg" id="m-quick">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('m-quick')">✕</button>
+    <div class="modal-title">⚡ Quick Generate</div>
+    <div class="modal-sub">Describe the issue — OpsDNA AI creates SOP + KB in seconds</div>
+    <div class="fg"><label class="fl">Problem Description</label>
+      <textarea class="fta" rows="4" placeholder="e.g. SAP Fiori goes blank every Monday for all users. Fix is to run Z_FIORI_CACHE_RESET and restart ICM…"></textarea>
+    </div>
+    <div class="g2 g12">
+      <div class="fg"><label class="fl">Generate</label>
+        <select class="fsel"><option>Both SOP + KB Article</option><option>SOP Only</option><option>KB Article Only</option></select>
+      </div>
+      <div class="fg"><label class="fl">Template</label>
+        <select class="fsel"><option>Accenture (Default)</option><option>ITIL v4</option><option>TCS</option></select>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Application</label>
+      <select class="fsel"><option>SAP S/4HANA</option><option>Oracle EBS</option><option>Salesforce</option><option>Access Management</option><option>Network / Infrastructure</option></select>
+    </div>
+    <button class="btn btn-cyan full-w" onclick="toast('⚡ Generated','SOP + KB created in 8s — review in Library & KB Generator');closeModal('m-quick')">⚡ Generate Now</button>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-stack" id="toasts"></div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+/* ── NAVIGATION ── */
+const ALL_PAGES=['dashboard','sop-tickets','sop-docs','sop-template','sop-library','kb-gen','kb-health','kb-gap','kb-active','kb-contra','itsm','chat-mining'];
+const PAGE_META={
+  'dashboard':['Mission Control','Command Center'],
+  'sop-tickets':['SOP Engine','From Tickets'],
+  'sop-docs':['SOP Engine','From Documents'],
+  'sop-template':['SOP Engine','Template Builder'],
+  'sop-library':['SOP Engine','SOP Library'],
+  'kb-gen':['KB Engine','AI Generator'],
+  'kb-health':['KB Engine','Health Monitor'],
+  'kb-gap':['KB Engine','Gap Radar'],
+  'kb-active':['KB Engine','Active KB'],
+  'kb-contra':['KB Engine','Contradiction Engine'],
+  'itsm':['Integrations','ITSM Connect'],
+  'chat-mining':['Integrations','Chat Mining']
+};
+
+function navGo(id, el){
+  ALL_PAGES.forEach(p=>{
+    const pg=document.getElementById('page-'+p);
+    if(pg)pg.classList.add('hidden');
+  });
+  const target=document.getElementById('page-'+id);
+  if(target){target.classList.remove('hidden');}
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el){el.classList.add('active');}
+  else{
+    const found=[...document.querySelectorAll('.nav-item')].find(n=>{
+      const oc=n.getAttribute('onclick')||'';
+      return oc.includes("'"+id+"'");
+    });
+    if(found)found.classList.add('active');
+  }
+  const meta=PAGE_META[id]||[id,''];
+  document.getElementById('ptitle').innerHTML=meta[0]+' <span>'+meta[1]+'</span>';
+  window.scrollTo(0,0);
+}
+
+/* ── TABS ── */
+function swTab(barId, panelId, btn){
+  const bar=document.getElementById(barId);
+  if(!bar)return;
+  bar.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  // find all sibling tab panels
+  const prefixes={'kbtabs':['kbp-ticket','kbp-manual','kbp-persona']};
+  const panels=prefixes[barId]||[];
+  panels.forEach(pid=>{
+    const p=document.getElementById(pid);
+    if(p)p.classList.add('hidden');
+  });
+  const target=document.getElementById(panelId);
+  if(target)target.classList.remove('hidden');
+}
+
+/* ── PERSONA ── */
+function swPersona(tab, panelId){
+  document.querySelectorAll('.p-tab').forEach(t=>t.classList.remove('on'));
+  tab.classList.add('on');
+  ['pl1','pl2','peu'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.add('hidden');
+  });
+  const p=document.getElementById(panelId);
+  if(p)p.classList.remove('hidden');
+}
+
+/* ── TEMPLATE PICK ── */
+function pickTpl(el){
+  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  toast('🧩 Template Selected',el.querySelector('.tpl-name').textContent+' format will be applied to all SOPs');
+}
+
+/* ── KB DECISION OPT ── */
+function pickKBOpt(el){
+  el.closest('.kb-opts').querySelectorAll('.kb-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+/* ── MODALS ── */
+function openModal(id){
+  const m=document.getElementById(id);
+  if(m)m.classList.add('open');
+}
+function closeModal(id){
+  const m=document.getElementById(id);
+  if(m)m.classList.remove('open');
+}
+document.querySelectorAll('.modal-bg').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+});
+
+/* ── TOASTS ── */
+function toast(title, msg){
+  const stack=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerHTML=`<div class="toast-icon">${title.split(' ')[0]}</div><div><div class="toast-title">${title.split(' ').slice(1).join(' ')}</div>${msg?'<div class="toast-msg">'+msg+'</div>':''}</div>`;
+  stack.appendChild(t);
+  setTimeout(()=>{
+    t.style.transition='all .28s';t.style.opacity='0';t.style.transform='translateX(20px)';
+    setTimeout(()=>t.remove(),300);
+  },3500);
+}
+
+/* ── TICKET SCAN SEQUENCE ── */
+function runTicketScan(){
+  toast('🔍 Scanning','Connecting to ServiceNow PROD…');
+  setTimeout(()=>toast('📊 Fetching','34 tickets matched · Clustering by similarity…'),1000);
+  setTimeout(()=>toast('✦ Complete','3 SOP clusters identified — ready to generate'),2300);
+}
+
+/* ── DRAG & DROP ── */
+const dzDoc=document.getElementById('dz-doc');
+if(dzDoc){
+  dzDoc.addEventListener('dragover',e=>{e.preventDefault();dzDoc.classList.add('over');});
+  dzDoc.addEventListener('dragleave',()=>dzDoc.classList.remove('over'));
+  dzDoc.addEventListener('drop',e=>{
+    e.preventDefault();dzDoc.classList.remove('over');
+    const f=e.dataTransfer.files[0];
+    if(f)toast('📄 File Loaded',f.name+' — AI extraction starting…');
+  });
+}
+
+/* ── AI KB GENERATION (Anthropic API) ── */
+async function generateKB(){
+  const btn=document.getElementById('kbGenBtn');
+  const outputEl=document.getElementById('kb-output');
+  const idleEl=document.getElementById('kb-idle');
+  const btnRow=document.getElementById('kb-btn-row');
+
+  const ticketId=document.getElementById('kbTicket').value||'INC-4821';
+  const summary=document.getElementById('kbSummary').value;
+  const root=document.getElementById('kbRoot').value;
+  const resolution=document.getElementById('kbResolution').value;
+  const kbType=document.getElementById('kbType').value;
+  const kbCat=document.getElementById('kbCat').value;
+
+  btn.disabled=true;
+  btn.innerHTML='<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;"></div> Generating…';
+
+  outputEl.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:16px;color:var(--text3);font-size:12.5px;">
+    <div class="ai-spin"></div> AI is generating your KB article…
+  </div>`;
+  btnRow.style.display='none';
+
+  const prompt=`You are a senior AMS (Application Management Services) Knowledge Manager. Generate a professional, structured KB (Knowledge Base) article.
+
+Ticket ID: ${ticketId}
+Issue: ${summary}
+Root Cause: ${root}
+Resolution: ${resolution}
+KB Type: ${kbType}
+Category: ${kbCat}
+
+Produce the KB article with EXACTLY these labeled sections:
+KB TITLE: [concise title]
+KB ID: KB-${Math.floor(3200+Math.random()*100)}
+SYMPTOM ALIASES: [5 different search phrases users might type]
+PROBLEM DESCRIPTION: [2-3 clear sentences]
+AFFECTED USERS: [who is impacted and on what system/environment]
+RESOLUTION STEPS:
+1. [step]
+2. [step]
+(numbered, clear, actionable)
+ESCALATION PATH: [when and who to escalate to]
+CONFIDENCE SCORE: [X% · reason in one line]
+RELATED ARTICLES: [2-3 plausible article IDs]
+
+Be concise, professional, and actionable. Use symptom-first language.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await resp.json();
+    const raw=(data.content&&data.content[0]&&data.content[0].text)||'';
+    renderKBOutput(raw);
+  }catch(err){
+    // Graceful fallback with polished demo
+    renderKBOutput(`KB TITLE: SAP Fiori Launchpad Not Loading — Monday Morning Issue
+KB ID: KB-3241
+SYMPTOM ALIASES: "SAP blank screen", "Fiori not opening", "SAP login broken Monday", "SAP tiles not showing", "Fiori launchpad error after weekend"
+PROBLEM DESCRIPTION: Every Monday morning, SAP Fiori launchpad becomes unresponsive or displays a blank screen for all users. The root cause is a scheduled Sunday night batch job (FIORI_SYNC_JOB) that locks the Fiori cache table (FIORI_CACHE_T), preventing the ICM service from clearing the session cache during its Monday restart cycle.
+AFFECTED USERS: All SAP Fiori users across Finance, HR, and Operations teams on the Production environment (SAP S/4HANA 2021).
+RESOLUTION STEPS:
+1. Confirm issue is widespread — not isolated to a single user or browser
+2. Inform affected users: "SAP is being restored, expected resolution in 10 minutes"
+3. [L2] Navigate to SE38 → Run program Z_FIORI_CACHE_RESET with parameter user=*
+4. [L2] Go to SMICM → Administration → ICM → Restart service → Confirm HTTP server is up
+5. Ask the original reporter to refresh their Fiori Launchpad and confirm access restored
+6. Close the ticket with resolution notes linked to this KB article
+ESCALATION PATH: If the issue is not resolved within 15 minutes, escalate to SAP Basis L3 team at basis-l3@org.com. Reference this KB and ticket ID in the escalation.
+CONFIDENCE SCORE: 94% · Based on 14 resolved incidents with identical symptoms and resolution pattern
+RELATED ARTICLES: KB-1042 · KB-2891 · SOP-2026-0847`);
+  }
+
+  btn.disabled=false;
+  btn.innerHTML='✦ Generate KB with AI';
+}
+
+function renderKBOutput(raw){
+  const outputEl=document.getElementById('kb-output');
+  const btnRow=document.getElementById('kb-btn-row');
+
+  // Extract title
+  const titleMatch=raw.match(/KB TITLE:\s*(.+)/);
+  const title=titleMatch?titleMatch[1].trim():'KB Article';
+
+  // Extract KB ID
+  const idMatch=raw.match(/KB ID:\s*(.+)/);
+  const kbId=idMatch?idMatch[1].trim():'KB-XXXX';
+
+  // Build formatted HTML
+  let html=`<div class="ob-title">📖 ${kbId} · ${title}</div>`;
+
+  const sections=[
+    ['SYMPTOM ALIASES','ob-sect'],
+    ['PROBLEM DESCRIPTION','ob-sect'],
+    ['AFFECTED USERS','ob-sect'],
+    ['RESOLUTION STEPS','ob-sect'],
+    ['ESCALATION PATH','ob-sect'],
+    ['CONFIDENCE SCORE','ob-sect'],
+    ['RELATED ARTICLES','ob-sect']
+  ];
+
+  sections.forEach(([sectionName])=>{
+    const regex=new RegExp(sectionName+':\\s*([\\s\\S]*?)(?=\\n[A-Z\\s]+:|$)');
+    const match=raw.match(regex);
+    if(match){
+      const content=match[1].trim();
+      html+=`<div class="ob-sect">${sectionName}</div>`;
+      if(sectionName==='RESOLUTION STEPS'){
+        const steps=content.split('\n').filter(l=>l.trim());
+        steps.forEach(step=>{
+          html+=`<div class="ob-step">${step.replace(/^\d+\.\s*/,'').trim()}</div>`;
+        });
+      } else if(sectionName==='ESCALATION PATH'||sectionName==='CONFIDENCE SCORE'||sectionName==='RELATED ARTICLES'){
+        html+=`<span class="ob-note">${content}</span>`;
+      } else {
+        html+=`<div style="color:var(--text2);font-size:12.5px;line-height:1.7;">${content}</div>`;
+      }
+    }
+  });
+
+  outputEl.innerHTML=`<div class="output-box" style="border:none;padding:0;max-height:none;">${html}</div>`;
+  btnRow.style.display='flex';
+  toast('✦ KB Generated','Article created · Review and publish when ready');
+}
+</script>
+</body>
+</html>
